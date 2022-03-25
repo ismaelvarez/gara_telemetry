@@ -4,7 +4,6 @@ from gara_messages.msg import Telemetry
 from gara_messages.msg import Battery
 from robotnik_msgs.msg import BatteryStatus
 from nav_msgs.msg import Odometry
-from gara_messages.msg import Odom
 
 
 class GaraTelemetry:
