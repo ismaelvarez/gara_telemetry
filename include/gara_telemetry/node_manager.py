@@ -1,8 +1,10 @@
 import rospy
 from sensor_msgs.msg import Image
 from gara_messages.msg import Telemetry
-from robotnik_msgs .msg import BatteryStatus
+from gara_messages.msg import Battery
+from robotnik_msgs.msg import BatteryStatus
 from nav_msgs.msg import Odometry
+from gara_messages.msg import Odom
 
 
 class GaraTelemetry:
@@ -19,31 +21,26 @@ class GaraTelemetry:
     def get_odometry(self):
         try:
             odom = rospy.wait_for_message('robot/robotnik_base_control/odom', Odometry, timeout=1)
-            position = [odom.pose.pose.position.x, odom.pose.pose.position.y, odom.pose.pose.position.z]
-            pose = [odom.pose.pose.orientation.x, odom.pose.pose.orientation.x, odom.pose.pose.orientation.x,
-                    odom.pose.pose.orientation.w]
-            self.telemetry.position = position
-            self.telemetry.pose = pose
+            self.telemetry.odom.position = odom.pose.pose.position
+            self.telemetry.odom.pose = odom.pose.pose.orientation
         except rospy.exceptions.ROSException:
-            self.telemetry.position = []
-            self.telemetry.pose = []
             rospy.loginfo(rospy.get_caller_id() + ': Timeout: No Odometry message received')
 
     def get_battery_status(self):
+        battery_msg = Battery()
         try:
             battery = rospy.wait_for_message('robot/robotnik_base_control/BatteryStatus', BatteryStatus, timeout=1)
-            self.telemetry.battery_level = battery.level
-            self.telemetry.battery_time_remaining = battery.time_remaining
-            self.telemetry.is_charging = int(battery.is_charging)
+            battery_msg.level = battery.level
+            battery_msg.time_remaining = battery.time_remaining
+            battery_msg.is_charging = int(battery.is_charging)
+            self.telemetry.battery = battery_msg
         except rospy.exceptions.ROSException:
-            self.telemetry.battery_level = -1
-            self.telemetry.battery_time_remaining = 0
-            self.telemetry.is_charging = 0
             rospy.loginfo(rospy.get_caller_id() + ': Timeout: No Battery message received')
 
     def publish(self):
-        self.telemetry_publisher.publish(self.telemetry)
-        rospy.loginfo(rospy.get_caller_id() + ': Published telemetry')
+        if self.telemetry != Telemetry():
+            self.telemetry_publisher.publish(self.telemetry)
+            rospy.loginfo(rospy.get_caller_id() + ': Published telemetry')
 
 
 def init():
