@@ -25,7 +25,9 @@ class GaraTelemetry:
             self.telemetry.position = position
             self.telemetry.pose = pose
         except rospy.exceptions.ROSException:
-            rospy.loginfo(rospy.get_caller_id() + 'Timeout: No Odometry message received')
+            self.telemetry.position = []
+            self.telemetry.pose = []
+            rospy.loginfo(rospy.get_caller_id() + ': Timeout: No Odometry message received')
 
     def get_battery_status(self):
         try:
@@ -34,11 +36,14 @@ class GaraTelemetry:
             self.telemetry.battery_time_remaining = battery.time_remaining
             self.telemetry.is_charging = bool(battery.is_charging)
         except rospy.exceptions.ROSException:
-            rospy.loginfo(rospy.get_caller_id() + 'Timeout: No Battery message received')
+            self.telemetry.battery_level = -1
+            self.telemetry.battery_time_remaining = -1
+            self.telemetry.is_charging = False
+            rospy.loginfo(rospy.get_caller_id() + ': Timeout: No Battery message received')
 
     def publish(self):
         self.telemetry_publisher.publish(self.telemetry)
-        rospy.loginfo(rospy.get_caller_id() + 'Publish telemetry')
+        rospy.loginfo(rospy.get_caller_id() + ': Published telemetry')
 
 
 def init():
