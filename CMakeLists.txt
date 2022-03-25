@@ -105,7 +105,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES gara_telemetry
-#   CATKIN_DEPENDS optris_drivers
+   CATKIN_DEPENDS gara_messages robotnik_msgs
 #  DEPENDS system_lib
 )
 
