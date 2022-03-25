@@ -34,11 +34,11 @@ class GaraTelemetry:
             battery = rospy.wait_for_message('robot/robotnik_base_control/BatteryStatus', BatteryStatus, timeout=1)
             self.telemetry.battery_level = battery.level
             self.telemetry.battery_time_remaining = battery.time_remaining
-            self.telemetry.is_charging = bool(battery.is_charging)
+            self.telemetry.is_charging = int(battery.is_charging)
         except rospy.exceptions.ROSException:
             self.telemetry.battery_level = -1
-            self.telemetry.battery_time_remaining = -1
-            self.telemetry.is_charging = False
+            self.telemetry.battery_time_remaining = 0
+            self.telemetry.is_charging = 0
             rospy.loginfo(rospy.get_caller_id() + ': Timeout: No Battery message received')
 
     def publish(self):
