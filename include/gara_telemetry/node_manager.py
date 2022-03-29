@@ -28,7 +28,7 @@ class GaraTelemetry:
     def get_battery_status(self):
         battery_msg = Battery()
         try:
-            battery = rospy.wait_for_message('robot/robotnik_base_control/BatteryStatus', BatteryStatus, timeout=1)
+            battery = rospy.wait_for_message('robot/battery_estimator/data', BatteryStatus, timeout=1)
             battery_msg.level = battery.level
             battery_msg.time_remaining = battery.time_remaining
             battery_msg.is_charging = int(battery.is_charging)
